@@ -38,6 +38,28 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void testCreateWithNullProductId() {
+        Product product = new Product();
+        product.setProductId(null);  // Branch: null == true
+        product.setProductName("Test");
+
+        Product result = productRepository.create(product);
+
+        assertNotNull(result.getProductId());  // UUID baru dibuat
+    }
+
+    @Test
+    void testCreateWithExistingProductId() {
+        Product product = new Product();
+        product.setProductId("existing-id");  // Branch: null == false, isEmpty() == false
+        product.setProductName("Test");
+
+        Product result = productRepository.create(product);
+
+        assertEquals("existing-id", result.getProductId());  // UUID tidak berubah
+    }
+
+    @Test
     void testFindAllIfEmpty(){
         Iterator<Product> productIterator = productRepository.findAll();
         assertFalse(productIterator.hasNext());
