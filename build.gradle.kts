@@ -5,6 +5,7 @@ val webdrivermanagerVersion = "5.6.3"
 plugins {
     java
     jacoco
+    pmd
     id("org.springframework.boot") version "3.5.10"
     id("io.spring.dependency-management") version "1.1.7"
 }
@@ -73,4 +74,10 @@ tasks.test{
 
 tasks.jacocoTestReport{
     dependsOn(tasks.test)
+}
+
+pmd {
+    toolVersion = "7.0.0-rc4"
+    rulesMinimumPriority = 5
+    ruleSetFiles = files("config/pmd/ruleset.xml")
 }
