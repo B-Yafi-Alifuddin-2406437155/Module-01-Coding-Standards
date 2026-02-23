@@ -1,0 +1,13 @@
+.gradle
+build
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+*.log
+.idea
+*.iml
+out
+.git
+.gitignore
+README.md
+.github
