@@ -15,8 +15,8 @@ class HomeControllerTest {
 
     @Test
     void testHomePage() {
-        String viewName = homeController.homePage();
+        final String viewName = homeController.homePage();
 
-        assertEquals("HomePage", viewName);
+        assertEquals("HomePage", viewName, "Home page should return HomePage view");
     }
 }
