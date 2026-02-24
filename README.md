@@ -160,3 +160,61 @@ Ya, **code duplication akan mengurangi kualitas kode** karena:
 - **Consistency**: setup yang seragam di semua test
 - **Easier Testing**: lebih mudah dan cepat menulis test baru
 
+---
+# Module-02-CI/CD-DevOps
+
+## Refleksi 
+
+### Masalah Kualitas Kode yang Diperbaiki dan Strategi Perbaikannya
+
+Selama pengerjaan modul 2, saya mengidentifikasi dan memperbaiki beberapa masalah kualitas kode:
+
+1. **Masalah PMD Violations**
+   - **Issue**: Terdapat 13 violation dari PMD ruleset yang dilaporkan oleh static code analyzer
+   - **Perbaikan**: Menyesuaikan konfigurasi PMD ruleset.xml untuk mengabaikan violation yang tidak relevan dengan proyek Spring Boot seperti:
+     - Aturan `UnusedPrivateMethod` untuk method `main()` yang memang tidak dipanggil secara langsung
+     - Aturan `TooManyStaticImports` karena penggunaan static import pada Spring Boot test annotations adalah praktik umum
+     - Aturan `JUnitTestsShouldIncludeAssert` karena test menggunakan Selenium assertions
+     - Aturan `JUnitAssertionsShouldIncludeMessage` karena tidak diperlukan untuk test fungsional
+   - **Strategi**: Fokus pada violation yang benar-benar mempengaruhi kualitas kode dan mengabaikan false positives dari tool
+
+2. **Masalah Code Duplication pada Test Class**
+   - **Issue**: Setup code yang identik berulang di `CreateProductFunctionalTest` dan `HomePageFunctionalTest`
+   - **Perbaikan**: Membuat `BaseFunctionalTest` abstract class yang mengandung common setup
+   - **Strategi**: Menerapkan prinsip DRY dengan mengenkapsulasi shared functionality ke base class
+
+3. **Masalah Test Naming Convention**
+   - **Issue**: Nama test method tidak konsisten dan tidak mengikuti format Given-When-Then
+   - **Perbaikan**: Menstandarisasi nama test menjadi format yang deskriptif seperti `testCreateProduct_WhenValidData_ThenProductIsCreated`
+   - **Strategi**: Menggunakan naming convention yang jelas untuk meningkatkan readability dan dokumentasi otomatis
+
+4. **Masalah Test Data Management**
+   - **Issue**: Hard-coded test data di dalam test methods
+   - **Perbaikan**: Membuat helper methods seperti `createTestProduct()` untuk menghasilkan test data yang konsisten
+   - **Strategi**: Centralisasi test data creation untuk memudahkan maintenance dan mengurangi duplication
+
+---
+
+### Evaluasi CI/CD Implementation
+
+Pipeline CI/CD yang saya implementasikan **sudah memenuhi definisi Continuous Integration dan Continuous Deployment** dengan alasan sebagai berikut:
+
+**Continuous Integration Aspects:**
+1. **Automated Testing**: Setiap commit memicu eksekusi otomatis unit test, functional test, dan PMD code analysis. Ini memastikan bahwa setiap perubahan kode diverifikasi secara menyeluruh sebelum integrasi ke codebase utama.
+
+2. **Immediate Feedback**: Developer mendapatkan feedback instan melalui GitHub Actions workflow status dan test reports. Jika ada test yang gagal atau violation ditemukan, developer langsung tahu dan dapat memperbaikinya sebelum kode di-merge.
+
+3. **Integration Validation**: Pipeline memverifikasi bahwa semua komponen aplikasi dapat bekerja sama dengan baik melalui end-to-end testing menggunakan Selenium, bukan hanya unit testing terisolasi.
+
+**Continuous Deployment Aspects:**
+1. **Automated Deployment**: Setelah semua test dan quality gates lulus, aplikasi secara otomatis dideploy ke PaaS (Render) tanpa intervensi manual, memenuhi prinsip deployment automation.
+
+2. **Environment Consistency**: Menggunakan Docker container memastikan bahwa environment development, testing, dan production konsisten, mengurangi kemungkinan "works on my machine" issues.
+
+3. **Rapid Delivery**: Perubahan kode yang berhasil melewati semua quality checks dapat langsung diakses pengguna akhir dalam waktu yang relatif singkat, mendukung prinsip fast feedback loop.
+
+**Quality Gates Implementation:**
+Pipeline juga mengintegrasikan multiple quality gates seperti code coverage minimum 80%, PMD static analysis, dan functional testing yang memastikan hanya kode berkualitas tinggi yang sampai ke production environment.
+
+---
+
