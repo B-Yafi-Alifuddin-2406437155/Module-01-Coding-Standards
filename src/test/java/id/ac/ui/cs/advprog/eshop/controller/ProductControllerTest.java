@@ -84,7 +84,7 @@ class ProductControllerTest {
     void testEditProductPost() {
         doNothing().when(productService).update(product);
 
-        String viewName = productController.editProductPost(product);
+        String viewName = productController.editProductPost(product, model);
 
         assertEquals("redirect:/product/list", viewName);
         verify(productService, times(1)).update(product);
