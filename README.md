@@ -218,3 +218,36 @@ Pipeline juga mengintegrasikan multiple quality gates seperti code coverage mini
 
 ---
 
+# Module 03 - Maintainability
+
+## Refleksi SOLID
+
+### 1. Prinsip SOLID yang Diterapkan
+
+Dalam proyek ini, saya telah menerapkan beberapa prinsip SOLID untuk meningkatkan kualitas dan pemeliharaan kode:
+
+*   **Single Responsibility Principle (SRP)**: Saya memisahkan `CarController` dari `ProductController`. Sebelumnya, kedua kontroler ini berada dalam satu file yang sama atau satu kelas yang sama, yang melanggar SRP karena kelas tersebut memiliki lebih dari satu alasan untuk berubah (mengelola produk dan mobil sekaligus). Dengan memisahkan keduanya ke kelas yang berbeda (`CarController` dan `ProductController`), masing-masing kelas kini hanya bertanggung jawab atas entitasnya sendiri.
+*   **Liskov Substitution Principle (LSP)**: Saya menghapus hubungan pewarisan antara `CarController` dan `ProductController`. Sebelumnya, `CarController` melakukan *extends* terhadap `ProductController`, padahal secara semantik "Car" bukanlah substitusi dari "Product" dalam konteks hirarki kontroler ini (misalnya, `CarController` tidak membutuhkan semua metode atau perilaku dari `ProductController`). Menghapus pewarisan ini memastikan bahwa objek kontroler tidak dipaksa memiliki perilaku yang tidak relevan.
+*   **Dependency Inversion Principle (DIP)**: Saya mengubah ketergantungan `CarController` dari implementasi konkret (`CarServiceImpl`) menjadi abstraksi/interface (`CarService`). Hal ini terlihat pada penggunaan `@Autowired private CarService carservice;`. Hal ini memungkinkan kontroler untuk tetap stabil meskipun implementasi layanan di bawahnya berubah, dan memudahkan proses *mocking* saat pengujian.
+*   **Open-Closed Principle (OCP)**: Dengan menggunakan interface seperti `CarService` dan `ProductService`, sistem menjadi terbuka untuk ekstensi (kita bisa menambahkan implementasi baru seperti `CarDbServiceImpl`) tetapi tertutup untuk modifikasi pada kode klien (seperti `CarController`).
+*   **Interface Segregation Principle (ISP)**: Meskipun interface saat ini masih sederhana, pemisahan antara `CarService` dan `ProductService` memastikan bahwa klien hanya bergantung pada metode yang mereka butuhkan. `CarController` tidak perlu tahu tentang metode-metode yang spesifik untuk `Product`.
+
+### 2. Keuntungan Menerapkan SOLID
+
+Penerapan prinsip SOLID memberikan beberapa keuntungan signifikan:
+
+*   **Kemudahan Pemeliharaan (Maintainability)**: Dengan **SRP**, jika terjadi perubahan pada logika `Car`, saya hanya perlu fokus pada `CarController` dan `CarService` tanpa khawatir merusak fungsionalitas `Product`.
+*   **Kode Lebih Fleksibel dan Modular**: Berkat **DIP**, saya bisa dengan mudah mengganti implementasi `CarService` (misalnya dari in-memory repository ke database sungguhan) tanpa perlu menyentuh kode di `CarController`. Cukup dengan membuat kelas baru yang mengimplementasikan `CarService`.
+*   **Pengujian Lebih Mudah**: Karena kelas-kelas sekarang lebih terfokus (**SRP**) dan bergantung pada interface (**DIP**), pembuatan *unit test* menjadi lebih sederhana karena saya bisa melakukan *mocking* pada dependensi dengan lebih bersih menggunakan tools seperti Mockito.
+*   **Struktur Kode Lebih Logis**: Dengan **LSP**, kita menghindari "Hacks" atau perilaku tak terduga yang muncul akibat pewarisan yang dipaksakan, sehingga kode lebih mudah dipahami oleh pengembang lain.
+
+### 3. Kerugian Tidak Menerapkan SOLID
+
+Jika prinsip SOLID tidak diterapkan, beberapa masalah yang mungkin muncul antara lain:
+
+*   **Rigidity (Kekakuan)**: Perubahan kecil di satu bagian kode bisa memaksa perubahan besar di bagian lain. Contohnya, jika `CarController` masih menyatu dengan `ProductController`, perubahan pada routing `Car` atau logika internal `Car` berisiko tinggi mengganggu kestabilan fitur `Product`.
+*   **Fragility (Kerapuhan)**: Kode menjadi mudah rusak saat diubah. Tanpa **LSP**, jika kita memiliki hirarki kelas yang tidak tepat (seperti `CarController` yang *extends* `ProductController`), perubahan pada *parent class* dapat merusak perilaku *subclass* secara tidak terduga, yang mengakibatkan bug yang sulit dilacak.
+*   **High Coupling (Keterikatan Tinggi)**: Tanpa **DIP**, kontroler akan sangat bergantung pada implementasi spesifik (`CarServiceImpl`). Jika kita ingin mengganti cara penyimpanan data, kita harus mengubah kode di kontroler juga, yang melanggar prinsip modularitas.
+*   **Sulit Dipahami (Lower Readability)**: Kode yang melanggar **SRP** cenderung menjadi "God Class" yang sangat besar dan melakukan banyak hal sekaligus. Pengembang baru akan kesulitan memahami alur kerja aplikasi karena logika bisnis yang campur aduk.
+
+
