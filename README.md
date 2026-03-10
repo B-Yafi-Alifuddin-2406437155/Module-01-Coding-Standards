@@ -251,3 +251,40 @@ Jika prinsip SOLID tidak diterapkan, beberapa masalah yang mungkin muncul antara
 *   **Sulit Dipahami (Lower Readability)**: Kode yang melanggar **SRP** cenderung menjadi "God Class" yang sangat besar dan melakukan banyak hal sekaligus. Pengembang baru akan kesulitan memahami alur kerja aplikasi karena logika bisnis yang campur aduk.
 
 
+# Module 4 - Refactoring and TDD
+
+## Reflesi TDD
+
+## 1. Refleksi terhadap Alur TDD
+
+Pada latihan ini, saya mengikuti alur **Test-Driven Development (TDD)** yang terdiri dari tiga tahap utama yaitu **Red, Green, dan Refactor**. 
+Pendekatan TDD menekankan penulisan pengujian terlebih dahulu sebelum mengimplementasikan kode program. 
+Menurut saya, alur TDD cukup membantu dalam proses pengembangan perangkat lunak. Dengan menulis test terlebih dahulu, saya menjadi lebih memahami kebutuhan dan perilaku yang diharapkan dari suatu komponen sebelum menuliskan implementasinya. 
+Misalnya pada pembuatan model `Order`, saya harus memikirkan terlebih dahulu bagaimana sistem seharusnya menangani kondisi seperti produk yang kosong, status yang tidak valid, atau perubahan status order. 
+Hal ini membuat proses implementasi menjadi lebih terarah karena sudah ada gambaran perilaku sistem yang ingin dicapai. 
+Selain itu, TDD juga membantu dalam mendeteksi kesalahan lebih awal. Ketika menjalankan test secara berkala, saya dapat langsung mengetahui apakah perubahan kode yang dilakukan sudah sesuai dengan kebutuhan atau justru menyebabkan test gagal. 
+Dengan demikian, proses debugging menjadi lebih mudah. Namun, dalam praktiknya saya juga merasakan beberapa tantangan. Terkadang cukup sulit untuk menuliskan test terlebih dahulu ketika struktur implementasi belum sepenuhnya jelas. 
+Oleh karena itu, ke depannya saya perlu meluangkan waktu lebih untuk memahami requirement dan merancang skenario pengujian sebelum mulai menulis implementasi kode. Dengan begitu, test yang dibuat dapat lebih merepresentasikan kebutuhan sistem dengan baik. 
+Secara keseluruhan, penggunaan TDD membantu meningkatkan kualitas kode karena setiap fitur yang dibuat selalu disertai dengan pengujian yang memastikan fungsionalitasnya berjalan dengan benar.
+
+---
+
+## 2. Refleksi terhadap Prinsip F.I.R.S.T.
+
+Pada tutorial ini saya telah membuat beberapa unit test untuk model, repository, dan service. Secara umum, test yang dibuat sudah mengikuti prinsip **F.I.R.S.T.**, yaitu **Fast, Independent, Repeatable, Self-validating, dan Timely**.
+
+**Fast**  
+Test yang dibuat dapat dijalankan dengan cepat karena hanya menguji unit kecil dari program seperti model dan repository, tanpa melibatkan sistem eksternal seperti database atau jaringan.
+**Independent**  
+Setiap test bersifat independen dan tidak bergantung pada hasil test lainnya. Hal ini dicapai dengan menggunakan metode `@BeforeEach` untuk menginisialisasi data sebelum setiap test dijalankan.
+**Repeatable**  
+Test dapat dijalankan berulang kali dengan hasil yang konsisten karena tidak bergantung pada faktor eksternal seperti waktu sistem, jaringan, atau kondisi lingkungan tertentu.
+**Self-validating**  
+Test menggunakan assertion seperti `assertEquals`, `assertSame`, dan `assertThrows` untuk memverifikasi hasil yang diharapkan. Dengan demikian, hasil test dapat langsung menunjukkan apakah test tersebut berhasil atau gagal tanpa perlu pengecekan manual.
+**Timely**  
+Test ditulis sebelum implementasi kode sebagai bagian dari proses TDD. Hal ini membantu memastikan bahwa implementasi yang dibuat benar-benar memenuhi kebutuhan yang telah didefinisikan dalam test.
+
+Meskipun sebagian besar prinsip F.I.R.S.T. sudah terpenuhi, masih terdapat ruang untuk perbaikan. Ke depannya, saya dapat menambahkan lebih banyak test untuk menangani berbagai edge case atau kondisi batas lainnya agar kualitas pengujian menjadi lebih baik. Selain itu, penamaan test yang lebih deskriptif juga dapat membantu meningkatkan keterbacaan dan pemahaman terhadap tujuan dari setiap test.
+Secara keseluruhan, penerapan prinsip F.I.R.S.T. membantu memastikan bahwa test yang dibuat efektif, dapat diandalkan, dan mudah dipelihara.
+
+
