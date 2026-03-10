@@ -16,11 +16,10 @@ public class PaymentRepository {
             payment.setStatus(payment.getStatus());
         }
 
-        for (int i = 0; i < paymentData.size(); i++) {
-            if (paymentData.get(i).getId().equals(payment.getId())) {
-                paymentData.set(i, payment);
-                return payment;
-            }
+        int idx = indexOfId(payment.getId());
+        if (idx >= 0) {
+            paymentData.set(idx, payment);
+            return payment;
         }
 
         paymentData.add(payment);
@@ -38,5 +37,14 @@ public class PaymentRepository {
 
     public List<Payment> findAll() {
         return new ArrayList<>(paymentData);
+    }
+
+    private int indexOfId(String id) {
+        for (int i = 0; i < paymentData.size(); i++) {
+            if (paymentData.get(i).getId().equals(id)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
