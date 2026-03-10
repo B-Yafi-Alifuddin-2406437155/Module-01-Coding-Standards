@@ -10,6 +10,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PaymentRepositoryTest {
@@ -52,6 +54,17 @@ class PaymentRepositoryTest {
     }
 
     @Test
+    void testSaveCreateKeepsSamePaymentInstance() {
+        Payment payment = payments.get(0);
+
+        Payment result = paymentRepository.save(payment);
+        Payment findResult = paymentRepository.findById(payment.getId());
+
+        assertSame(payment, result);
+        assertSame(payment, findResult);
+    }
+
+    @Test
     void testSaveUpdate() {
         Payment payment = payments.get(1);
         paymentRepository.save(payment);
@@ -64,6 +77,15 @@ class PaymentRepositoryTest {
         Payment findResult = paymentRepository.findById(payment.getId());
         assertEquals(payment.getId(), result.getId());
         assertEquals(Payment.STATUS_REJECTED, findResult.getStatus());
+    }
+
+    @Test
+    void testSaveWithoutIdThrowsException() {
+        Order order = payments.get(0).getOrder();
+        Payment payment = new Payment(null, order, "VOUCHER_CODE",
+                Map.of("voucherCode", "ESHOP1234ABC5678"));
+
+        assertThrows(IllegalArgumentException.class, () -> paymentRepository.save(payment));
     }
 
     @Test
