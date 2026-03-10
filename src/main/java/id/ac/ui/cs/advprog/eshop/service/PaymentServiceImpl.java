@@ -12,6 +12,9 @@ import java.util.Map;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
+    private static final String METHOD_VOUCHER = "VOUCHER_CODE";
+    private static final String METHOD_COD = "CASH_ON_DELIVERY";
+
     @Autowired
     private PaymentRepository paymentRepository;
 
@@ -19,17 +22,9 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
         Payment payment = new Payment(null, order, method, paymentData);
 
-        String status = Payment.STATUS_REJECTED;
-        if ("VOUCHER_CODE".equals(method)) {
-            String voucher = getValue(paymentData, "voucherCode");
-            status = isValidVoucherCode(voucher) ? Payment.STATUS_SUCCESS : Payment.STATUS_REJECTED;
-        } else if ("CASH_ON_DELIVERY".equals(method)) {
-            String address = getValue(paymentData, "address");
-            String fee = getValue(paymentData, "deliveryFee");
-            status = isNonEmpty(address) && isNonEmpty(fee) ? Payment.STATUS_SUCCESS : Payment.STATUS_REJECTED;
-        }
-
+        String status = determineStatus(method, paymentData);
         payment.setStatus(status);
+
         return paymentRepository.save(payment);
     }
 
@@ -53,6 +48,21 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<Payment> getAllPayments() {
         return paymentRepository.findAll();
+    }
+
+    private String determineStatus(String method, Map<String, String> paymentData) {
+        if (METHOD_VOUCHER.equals(method)) {
+            String voucher = getValue(paymentData, "voucherCode");
+            return isValidVoucherCode(voucher) ? Payment.STATUS_SUCCESS : Payment.STATUS_REJECTED;
+        }
+        if (METHOD_COD.equals(method)) {
+            String address = getValue(paymentData, "address");
+            String fee = getValue(paymentData, "deliveryFee");
+            return isNonEmpty(address) && isNonEmpty(fee)
+                    ? Payment.STATUS_SUCCESS
+                    : Payment.STATUS_REJECTED;
+        }
+        return Payment.STATUS_REJECTED;
     }
 
     private String getValue(Map<String, String> data, String key) {
