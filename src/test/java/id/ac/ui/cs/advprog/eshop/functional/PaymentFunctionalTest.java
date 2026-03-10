@@ -12,6 +12,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import org.openqa.selenium.WebElement;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ExtendWith(SeleniumJupiter.class)
@@ -49,5 +50,51 @@ class PaymentFunctionalTest {
         driver.get(baseUrl + "/payment/detail/" + paymentId);
 
         assertTrue(driver.getPageSource().contains(paymentId));
+    }
+
+    @Test
+    void paymentAdminList_showsPayment(ChromeDriver driver) {
+        // create payment
+        driver.get(baseUrl + "/order/create");
+        driver.findElement(By.id("authorInput")).sendKeys("Safira");
+        driver.findElement(By.id("productNameInput")).sendKeys("Laptop");
+        driver.findElement(By.id("productQuantityInput")).sendKeys("1");
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+
+        driver.findElement(By.id("methodSelect")).sendKeys("VOUCHER_CODE");
+        driver.findElement(By.id("voucherCodeInput")).sendKeys("ESHOP1234ABC5678");
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+
+        String paymentId = driver.findElement(By.id("paymentIdText")).getText();
+
+        // admin list page
+        driver.get(baseUrl + "/payment/admin/list");
+        assertTrue(driver.getPageSource().contains(paymentId));
+    }
+
+    @Test
+    void paymentAdminDetail_canUpdateStatus(ChromeDriver driver) {
+        // create payment
+        driver.get(baseUrl + "/order/create");
+        driver.findElement(By.id("authorInput")).sendKeys("Safira");
+        driver.findElement(By.id("productNameInput")).sendKeys("Laptop");
+        driver.findElement(By.id("productQuantityInput")).sendKeys("1");
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+
+        driver.findElement(By.id("methodSelect")).sendKeys("VOUCHER_CODE");
+        driver.findElement(By.id("voucherCodeInput")).sendKeys("ESHOP1234ABC5678");
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+
+        String paymentId = driver.findElement(By.id("paymentIdText")).getText();
+
+        // admin detail page
+        driver.get(baseUrl + "/payment/admin/detail/" + paymentId);
+
+        WebElement statusSelect = driver.findElement(By.id("statusSelect"));
+        statusSelect.sendKeys("REJECTED");
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+
+        // after redirect, status should show REJECTED
+        assertTrue(driver.getPageSource().contains("REJECTED"));
     }
 }
