@@ -21,11 +21,15 @@ public class Payment {
         this.id = id;
         this.order = order;
         this.method = method;
-        this.paymentData = paymentData == null ? new HashMap<>() : new HashMap<>(paymentData);
+        this.paymentData = copyData(paymentData);
         this.status = STATUS_PENDING;
     }
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    private Map<String, String> copyData(Map<String, String> data) {
+        return data == null ? new HashMap<>() : new HashMap<>(data);
     }
 }
