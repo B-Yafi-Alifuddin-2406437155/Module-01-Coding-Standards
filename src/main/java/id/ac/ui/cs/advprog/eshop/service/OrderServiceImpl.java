@@ -26,10 +26,9 @@ public class OrderServiceImpl implements OrderService {
     public Order updateStatus(String orderId, String status) {
         Order order = orderRepository.findById(orderId);
         if (order != null) {
-            Order newOrder = new Order(order.getId(), order.getProducts(),
-                    order.getOrderTime(), order.getAuthor(), status);
-            orderRepository.save(newOrder);
-            return newOrder;
+            order.setStatus(status);
+            orderRepository.save(order);
+            return order;
         } else {
             throw new NoSuchElementException();
         }

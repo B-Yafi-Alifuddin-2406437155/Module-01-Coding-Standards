@@ -1,19 +1,18 @@
 package id.ac.ui.cs.advprog.eshop.repository;
 
 import id.ac.ui.cs.advprog.eshop.model.Payment;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+@Repository
 public class PaymentRepository {
     private final List<Payment> paymentData = new ArrayList<>();
 
     public Payment save(Payment payment) {
         if (payment.getId() == null || payment.getId().isEmpty()) {
-            payment = new Payment(UUID.randomUUID().toString(),
-                    payment.getOrder(), payment.getMethod(), payment.getPaymentData());
-            payment.setStatus(payment.getStatus());
+            throw new IllegalArgumentException("Payment id must not be null or empty");
         }
 
         int idx = indexOfId(payment.getId());
