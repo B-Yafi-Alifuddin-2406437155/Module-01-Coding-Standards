@@ -15,6 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +49,8 @@ class PaymentServiceImplTest {
 
         Payment result = paymentService.addPayment(order, "VOUCHER_CODE", data);
 
+        assertNotNull(result.getId());
+        assertFalse(result.getId().isEmpty());
         assertEquals(Payment.STATUS_SUCCESS, result.getStatus());
         verify(paymentRepository, times(1)).save(any(Payment.class));
     }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -20,7 +21,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
-        Payment payment = new Payment(null, order, method, paymentData);
+        Payment payment = new Payment(UUID.randomUUID().toString(), order, method, paymentData);
 
         String status = determineStatus(method, paymentData);
         payment.setStatus(status);
